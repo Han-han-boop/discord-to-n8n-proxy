@@ -3,7 +3,7 @@ import { verifyKey } from 'discord-interactions';
 import { InteractionType, InteractionResponseType } from 'discord-interactions';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000; // ← obligé pour Render
 const PUBLIC_KEY = process.env.PUBLIC_KEY;
 const FORWARD_URL = process.env.FORWARD_URL;
 
@@ -21,10 +21,12 @@ app.post('/interactions', async (req, res) => {
     return res.status(401).send('Bad request signature');
   }
 
+  // 🔁 Répond au PING de Discord (obligatoire pour valider l'URL)
   if (req.body.type === InteractionType.PING) {
     return res.json({ type: InteractionResponseType.PONG });
   }
 
+  // 🚀 Sinon, forward à n8n
   try {
     const response = await fetch(FORWARD_URL, {
       method: 'POST',
@@ -34,9 +36,12 @@ app.post('/interactions', async (req, res) => {
 
     const data = await response.json();
     return res.json(data);
-  } catch (error) {
+  } catch (err) {
+    console.error('Error forwarding to n8n:', err);
     return res.status(500).send('Forwarding failed');
   }
 });
 
-app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Listening on port ${PORT}`);
+});
