@@ -1,9 +1,8 @@
-import express from 'express';
-import { verifyKey } from 'discord-interactions';
-import { InteractionType, InteractionResponseType } from 'discord-interactions';
+const express = require('express');
+const { verifyKey, InteractionType, InteractionResponseType } = require('discord-interactions');
 
 const app = express();
-const PORT = process.env.PORT || 10000; // ← obligé pour Render
+const PORT = process.env.PORT || 10000;
 const PUBLIC_KEY = process.env.PUBLIC_KEY;
 const FORWARD_URL = process.env.FORWARD_URL;
 
@@ -21,12 +20,10 @@ app.post('/interactions', async (req, res) => {
     return res.status(401).send('Bad request signature');
   }
 
-  // 🔁 Répond au PING de Discord (obligatoire pour valider l'URL)
   if (req.body.type === InteractionType.PING) {
     return res.json({ type: InteractionResponseType.PONG });
   }
 
-  // 🚀 Sinon, forward à n8n
   try {
     const response = await fetch(FORWARD_URL, {
       method: 'POST',
