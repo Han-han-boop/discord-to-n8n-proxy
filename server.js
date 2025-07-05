@@ -1,34 +1,25 @@
-const express = require('express');
-const { Client, GatewayIntentBits } = require('discord.js');
-const fetch = require('node-fetch');
+import express from 'express';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
 
+// Middleware pour parser le JSON
+app.use(express.json());
+
+// ✅ Ping (keep-alive)
 app.get('/', (req, res) => {
-  res.send('Bot is alive');
+  res.send('✅ Bot is alive and running.');
 });
 
-// Lancer le serveur HTTP pour Render
-app.listen(PORT, () => {
-  console.log(`Keep-alive webserver listening on port ${PORT}`);
+// ✅ Endpoint pour recevoir les événements Discord
+app.post('/events', (req, res) => {
+  console.log('📨 Event received from Discord:', req.body);
+
+  // Tu peux traiter les events ici, ex : vérifier le type, faire une action, etc.
+  res.sendStatus(200); // toujours renvoyer 200 pour confirmer réception
 });
 
-// Discord client
-const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent]
+// Démarrer le serveur
+app.listen(port, () => {
+  console.log(`🚀 Server listening on port ${port}`);
 });
-
-client.on('ready', () => {
-  console.log(`Bot connecté en tant que ${client.user.tag}`);
-});
-
-// Message handler
-client.on('messageCreate', message => {
-  if (!message.author.bot) {
-    console.log("Message reçu :", message.content);
-  }
-});
-
-// Connexion à Discord
-client.login(process.env.DISCORD_TOKEN);
