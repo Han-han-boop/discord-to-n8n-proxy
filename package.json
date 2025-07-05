@@ -1,12 +1,21 @@
 {
-  "name": "discord-to-n8n-proxy",
+  "name": "discord-n8n-proxy",
   "version": "1.0.0",
-  "type": "module",
+  "description": "Proxy Discord vers n8n",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
-    "express": "^4.18.2"
-  }
+    "discord.js": "^14.11.0",
+    "express": "^4.18.2",
+    "node-fetch": "^3.3.2"
+  },
+  "keywords": [],
+  "author": "Toi",
+  "license": "MIT"
 }
